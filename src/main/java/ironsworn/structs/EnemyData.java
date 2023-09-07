@@ -9,7 +9,7 @@ public class EnemyData implements Serializable {
 
     public EnemyData(String name, LocationData location, ItemData[] loot) {
         this.name = name;
-        this.location = location;:
+        this.location = location;
         if(!location.contains(this)){
             location.add(this);
         }
