@@ -2,23 +2,23 @@ package ironsworn.actions.impl;
 
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
+import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
 import ironsworn.structs.ItemData;
 
-import java.util.List;
-
-public class Gather extends QuestAction {
+public class Gather extends BaseQuestAction {
     private ItemData item;
 
     @Override
-    public void updateObjectives(Objective objectives) {
-
-    }
-
-    @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
-        item = objectives.getItemAcquired();
-        objectives.setItemAcquired(null);
+        assert (objectives.getItemAcquired() != null || objectives.getItemUsed() != null);
+        if (objectives.getItemAcquired() != null) {
+            item = objectives.getItemAcquired();
+            objectives.setItemAcquired(null);
+        } else if (objectives.getItemUsed() != null) {
+            item = objectives.getItemUsed();
+            objectives.setItemUsed(null);
+        }
         return this;
     }
 
@@ -27,8 +27,4 @@ public class Gather extends QuestAction {
         return "gather %s".formatted(item.name);
     }
 
-    @Override
-    protected List<List<String>> getExpansions() {
-        return List.of(List.of());
-    }
 }

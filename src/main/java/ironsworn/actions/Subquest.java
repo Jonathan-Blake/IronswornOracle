@@ -4,11 +4,11 @@ import ironsworn.Objective;
 import ironsworn.StoryTeller;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Subquest extends QuestAction {
+public class Subquest extends BaseQuestAction {
     private final List<QuestAction> actions;
     private boolean expandable = true;
 
@@ -18,9 +18,12 @@ public class Subquest extends QuestAction {
 
     @Override
     public boolean expand(StoryTeller storyTeller) {
-        if(expandable){
+        if (expandable) {
             ArrayList<QuestAction> tmp = new ArrayList<>(actions);
-            Collections.shuffle(tmp);
+//            tmp.removeIf(action -> !action.isExpandable());
+            tmp.sort(Comparator.comparing(QuestAction::countNodes));// Expand smallest first wide shallow trees
+            // Collections.shuffle(tmp); // Randomly expand
+            // tmp.sort(Comparator.comparing(QuestAction::countNodes)); // deep
             for (QuestAction questAction : tmp) {
                 if (questAction.expand(storyTeller)) {
                     return true;
@@ -29,11 +32,6 @@ public class Subquest extends QuestAction {
         }
         expandable = false;
         return false;
-    }
-
-    @Override
-    public void updateObjectives(Objective objectives) {
-
     }
 
     @Override
@@ -55,9 +53,4 @@ public class Subquest extends QuestAction {
     public List<QuestAction> getSubActions() {
         return this.actions;
     }
-
-//    @Override
-//    protected void setSubActions(List<QuestAction> actions) {
-//        this.actions = actions;
-//    }
 }

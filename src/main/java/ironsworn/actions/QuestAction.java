@@ -6,37 +6,50 @@ import ironsworn.StoryTeller;
 import ironsworn.Utility;
 import ironsworn.actions.impl.*;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public abstract class QuestAction {
     private List<QuestAction> subActions = new LinkedList<>();
     private boolean expandable = true;
 
     public static QuestAction getFromKeyword(String keyword){
-        switch (keyword){
+        switch (keyword) {
 //            case "Defend": return new Defend();
-            case "report": return new Report();
-            case "goto": return new GoTo();
-            case "kill": return new Kill();
-            case "give": return new Give();
-            case "listen": return new Listen();
-            case "get": return new Get();
-            case "spy": return new Spy();
-            case "use": return new Use();
-            case "learn": return new Learn();
-            case "explore": return new Explore();
-            case "steal": return new Steal();
-            case "gather": return new Gather();
-            case "stealth": return new Stealth();
+            case "explore":
+                return new Explore();
+            case "gather":
+                return new Gather();
+            case "give":
+                return new Give();
+            case "get":
+                return new Get();
+            case "goto":
+                return new GoTo();
+            case "kill":
+                return new Kill();
+            case "listen":
+                return new Listen();
+            case "report":
+                return new Report();
+            case "use":
+                return new Use();
+            case "learn":
+                return new Learn();
+            case "spy":
+                return new Spy();
+            case "steal":
+                return new Steal();
+            case "stealth":
+                return new Stealth();
+            case "read":
+                return new Read();
+            default:
+                throw new InvalidActionException(keyword);
         }
-        throw new InvalidActionException(keyword);
     }
 
     public static int countNodes(QuestAction node) {
         if(node.getSubActions().isEmpty()){
-//            System.out.println("Is Empty");
             return 1;
         } else {
             return node.getSubActions().stream().mapToInt(QuestAction::countNodes).sum();
@@ -45,9 +58,7 @@ public abstract class QuestAction {
 
     public static StringBuilder printIndentedTree(QuestAction root, int i) {
         StringBuilder s = new StringBuilder("  ".repeat(i) + root.getActionText());
-        root.getSubActions().forEach(sub -> {
-            s.append(System.lineSeparator()).append(printIndentedTree(sub, i+1));
-        });
+        root.getSubActions().forEach(sub -> s.append(System.lineSeparator()).append(printIndentedTree(sub, i + 1)));
         return s;
     }
 
@@ -68,10 +79,12 @@ public abstract class QuestAction {
             if(!expandable){
                 return false;
             }
+
             if(this.getSubActions().isEmpty()){
                 List<String> nextSteps = Utility.pickRandom(getExpansions());
                 if(nextSteps.isEmpty()) {
                     //No additional steps. Try and expand a different node
+                    System.out.println("Closing plot thread.");
                     expandable = false;
                     return false;
                 } else {
@@ -81,8 +94,10 @@ public abstract class QuestAction {
                     return true;
                 }
             } else {
-                for (QuestAction subAction : this.getSubActions()) {
-                    if(subAction.expand(storyTeller)){
+                final List<QuestAction> tmp = new ArrayList<>(this.getSubActions());
+                tmp.sort(Comparator.comparing(QuestAction::countNodes));
+                for (QuestAction subAction : tmp) {
+                    if (subAction.expand(storyTeller)) {
                         return true;
                     }
                 }

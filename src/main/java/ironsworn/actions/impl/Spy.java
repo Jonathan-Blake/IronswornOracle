@@ -2,18 +2,14 @@ package ironsworn.actions.impl;
 
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
+import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
 import ironsworn.structs.EnemyData;
 
 import java.util.List;
 
-public class Spy extends QuestAction {
+public class Spy extends BaseQuestAction {
     private EnemyData target;
-
-    @Override
-    public void updateObjectives(Objective objectives) {
-
-    }
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {

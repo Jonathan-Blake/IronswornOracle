@@ -1,5 +1,6 @@
 package ironsworn;
 
+import ironsworn.actions.QuestAction;
 import ironsworn.structs.EnemyData;
 import ironsworn.structs.ItemData;
 import ironsworn.structs.NPCData;
@@ -9,6 +10,7 @@ public class Objective {
     EnemyData enemyAttacking = null;
     ItemData itemAcquired = null;
     ItemData itemUsed = null;
+    private QuestAction previousAction;
 
     public NPCData getReportingTo() {
         return reportingTo;
@@ -40,5 +42,9 @@ public class Objective {
 
     public void setItemUsed(ItemData itemUsed) {
         this.itemUsed = itemUsed;
+    }
+
+    public void setPreviousGoal(QuestAction action) {
+        previousAction = action;
     }
 }

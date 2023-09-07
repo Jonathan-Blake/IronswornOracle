@@ -2,17 +2,18 @@ package ironsworn.actions.impl;
 
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
+import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
 import ironsworn.structs.EnemyData;
 
 import java.util.List;
 
-public class Kill extends QuestAction {
+public class Kill extends BaseQuestAction {
     private EnemyData enemyAttacking;
 
     @Override
     public void updateObjectives(Objective objectives) {
-
+        objectives.setEnemyAttacking(enemyAttacking);
     }
 
     @Override

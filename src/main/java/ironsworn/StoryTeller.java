@@ -1,14 +1,14 @@
 package ironsworn;
 
+import grammar.Motivation;
+import grammar.Quest;
+import grammar.QuestLine;
 import ironsworn.actions.QuestAction;
 import ironsworn.actions.Subquest;
 import ironsworn.structs.EnemyData;
 import ironsworn.structs.ItemData;
 import ironsworn.structs.LocationData;
 import ironsworn.structs.NPCData;
-import grammar.Motivation;
-import grammar.Quest;
-import grammar.QuestLine;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +39,7 @@ public class StoryTeller {
     }
 
     public Subquest assignActions(final List<String> actions, final Objective objectives) {
+        System.out.println("Assigning: " + actions);
         List<String> reversed = new ArrayList<>(actions);
         Collections.reverse(reversed);
 
@@ -46,7 +47,7 @@ public class StoryTeller {
         for (String keyword : reversed) {
             QuestAction action = QuestAction.getFromKeyword(keyword)
                     .initialise(objectives, this);
-            //action.updateObjectives(objectives);
+            objectives.setPreviousGoal(action);
             questActions.add(0, action);
         }
 

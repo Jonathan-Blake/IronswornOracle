@@ -6,19 +6,23 @@ import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
 import ironsworn.structs.ItemData;
 
-public class Use extends BaseQuestAction {
-    private ItemData item;
+public class Read extends BaseQuestAction {
+    private ItemData target;
+
+    @Override
+    public void updateObjectives(Objective objectives) {
+        objectives.setItemAcquired(target);
+    }
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
-        assert objectives.getItemUsed() == null;
-        item = storyTeller.GetItem();
-        objectives.setItemUsed(item);
+        this.target = storyTeller.GetItem();
+        objectives.setItemAcquired(this.target);
         return this;
     }
 
     @Override
     public String getActionText() {
-        return "use %s".formatted(item.name);
+        return "read to %s".formatted(target.name);
     }
 }

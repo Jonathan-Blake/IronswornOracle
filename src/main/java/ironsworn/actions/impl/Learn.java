@@ -2,17 +2,13 @@ package ironsworn.actions.impl;
 
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
+import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
 
 import java.util.List;
 
-public class Learn extends QuestAction {
+public class Learn extends BaseQuestAction {
     private String subject;
-
-    @Override
-    public void updateObjectives(Objective objectives) {
-
-    }
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
@@ -30,8 +26,8 @@ public class Learn extends QuestAction {
         return List.of(
                 List.of(),
                 List.of("goto", "subquest", "listen"),
-                List.of("goto", "get", "listen"),//Should be read
-                List.of("get","subquest","give","listen")
+                List.of("goto", "get", "read"),
+                List.of("get", "subquest", "give", "listen")
         );
     }
 }

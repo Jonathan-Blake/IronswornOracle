@@ -2,24 +2,18 @@ package ironsworn.actions.impl;
 
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
+import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
 import ironsworn.structs.LocationData;
 
-import java.util.List;
-
-public class  Explore extends QuestAction {
+public class Explore extends BaseQuestAction {
     private LocationData location;
 
     @Override
-    public void updateObjectives(Objective objectives) {
-
-    }
-
-    @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
-        if(objectives.getReportingTo() != null){
+        if (objectives.getReportingTo() != null) {
             location = objectives.getReportingTo().location;
-        } else if( objectives.getEnemyAttacking() != null){
+        } else if (objectives.getEnemyAttacking() != null) {
             location = objectives.getEnemyAttacking().location;
         } else {
             location = storyTeller.GetLocation();
@@ -30,10 +24,5 @@ public class  Explore extends QuestAction {
     @Override
     public String getActionText() {
         return "explore %s".formatted(location.name);
-    }
-
-    @Override
-    protected List<List<String>> getExpansions() {
-        return List.of(List.of());
     }
 }

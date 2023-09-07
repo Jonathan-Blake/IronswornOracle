@@ -1,22 +1,29 @@
 package ironsworn.actions.impl;
 
+import ironsworn.Campaign;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
+import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
 import ironsworn.structs.LocationData;
 
 import java.util.List;
 
-public class GoTo extends QuestAction {
+public class GoTo extends BaseQuestAction {
 
-    public static final String textFormat = "Go to %s at %s";
     private String target;
     private LocationData location;
     private boolean enemy;
 
     @Override
     public void updateObjectives(Objective objectives) {
-
+        if (target != null) {
+            if (enemy) {
+                objectives.setEnemyAttacking(Campaign.getEnemy(target, location));
+            } else {
+                objectives.setReportingTo(Campaign.getFriendlyNPC(target, location));
+            }
+        }
     }
 
     @Override
@@ -44,6 +51,9 @@ public class GoTo extends QuestAction {
 
     @Override
     protected List<List<String>> getExpansions() {
-        return List.of(List.of(), List.of("explore"), List.of("learn","goto"));
+        return List.of(
+                List.of(),
+                List.of("explore"),
+                List.of("learn", "goto"));
     }
 }

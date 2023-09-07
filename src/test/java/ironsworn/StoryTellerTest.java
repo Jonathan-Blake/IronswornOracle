@@ -1,12 +1,12 @@
 package ironsworn;
 
+import grammar.Motivation;
+import grammar.Quest;
 import ironsworn.actions.Subquest;
 import ironsworn.structs.EnemyData;
 import ironsworn.structs.ItemData;
 import ironsworn.structs.LocationData;
 import ironsworn.structs.NPCData;
-import grammar.Motivation;
-import grammar.Quest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -43,7 +43,7 @@ class StoryTellerTest {
         Mockito.lenient().when(mockCampaign.GetLocation()).thenReturn(new LocationData("Peaceful Waterfall"));
         Mockito.lenient().when(mockCampaign.GetItem()).thenReturn(new ItemData("Thing-a-majig"));
 
-        Quest ret = storyTeller.createNewQuest(Motivation.Knowledge, 6);
+        Quest ret = storyTeller.createNewQuest(Motivation.Knowledge, 10);
 
         System.out.println(ret.size());
         System.out.println(ret.getFullText());
