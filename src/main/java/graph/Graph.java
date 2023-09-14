@@ -1,5 +1,7 @@
 package graph;
 
+import graph.search.Criteria;
+
 import java.util.*;
 
 public class Graph<T> {
@@ -38,14 +40,14 @@ public class Graph<T> {
         return false;
     }
 
-    public static <T> boolean search(Vertex<T> start, Vertex<T> end, Relationship relationship) {
-        return searchHelper(start, end, relationship, new HashMap<>());
+    public static <T> boolean traversablePath(Vertex<T> start, Vertex<T> end, Relationship relationship) {
+        return traversablePathhelper(start, end, relationship, new HashMap<>());
     }
 
-    private static <T> boolean searchHelper(Vertex<T> start,
-                                            Vertex<T> end,
-                                            Relationship relationship,
-                                            Map<Vertex<T>, color> vertexColorMap
+    private static <T> boolean traversablePathhelper(Vertex<T> start,
+                                                     Vertex<T> end,
+                                                     Relationship relationship,
+                                                     Map<Vertex<T>, color> vertexColorMap
     ) {
         final Map<Vertex<T>, Relationship> entries = start.getAdjacent();
         if (entries.containsKey(end) && entries.get(end) == relationship) {
@@ -57,7 +59,7 @@ public class Graph<T> {
                 continue;
             }
             if (vertexColorMap.computeIfAbsent(entry.getKey(), key -> color.WHITE) == color.WHITE &&
-                    searchHelper(entry.getKey(), end, relationship, vertexColorMap)) {
+                    traversablePathhelper(entry.getKey(), end, relationship, vertexColorMap)) {
                 return true;
             }
         }
@@ -76,7 +78,44 @@ public class Graph<T> {
         }
     }
 
-    private Vertex<T> _addVertex(T item) {
+    public Vertex<T> search(Criteria<T> searchCriteria) {
+        final HashMap<Vertex<T>, color> vertexColorMap = new HashMap<>();
+        Vertex<T> ret = null;
+        for (Map.Entry<Vertex<T>, List<Edge<T>>> entry : adjacency.entrySet()) {
+            ret = searchHelper(searchCriteria, entry.getKey(), vertexColorMap);
+            if (ret != null) {
+                break;
+            }
+        }
+        if (ret == null && searchCriteria.orElse() != null) {
+            ret = search(searchCriteria.orElse());
+        }
+        return ret;
+    }
+
+    private Vertex<T> searchHelper(Criteria<T> searchCriteria,
+                                   Vertex<T> start,
+                                   Map<Vertex<T>, color> vertexColorMap
+    ) {
+        if (searchCriteria.match(start)) {
+            return start;
+        }
+        final Map<Vertex<T>, Relationship> entries = start.getAdjacent();
+        vertexColorMap.put(start, color.GRAY);
+        for (Map.Entry<Vertex<T>, Relationship> entry : entries.entrySet()) {
+            if (vertexColorMap.computeIfAbsent(entry.getKey(), key -> color.WHITE) == color.WHITE) {
+                Vertex<T> tmp = searchHelper(searchCriteria, entry.getKey(), vertexColorMap);
+                if (tmp != null) {
+                    return tmp;
+                }
+            }
+        }
+        vertexColorMap.put(start, color.BLACK);
+
+        return null;
+    }
+
+    private Vertex<T> addVertexHelper(T item) {
         final Vertex<T> key = new Vertex<>(item);
         if (!adjacency.containsKey(key)) {
             adjacency.put(key, new ArrayList<>());
@@ -91,8 +130,8 @@ public class Graph<T> {
     }
 
     public boolean addEdge(Relationship edgeType, T a, T b) {
-        Vertex<T> aNode = _addVertex(a);
-        Vertex<T> bNode = _addVertex(b);
+        Vertex<T> aNode = addVertexHelper(a);
+        Vertex<T> bNode = addVertexHelper(b);
         Edge<T> edge = aNode.link(bNode, edgeType);
         if (testRules(edge)) {
             return true;

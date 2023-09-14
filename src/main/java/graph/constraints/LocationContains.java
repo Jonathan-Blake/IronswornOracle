@@ -34,6 +34,6 @@ public class LocationContains implements Constraint<NamedCampaignItem> {
 
     @Override
     public boolean test(Vertex<NamedCampaignItem> rVertex, Vertex<NamedCampaignItem> mVertex) {
-        return Graph.search(rVertex, mVertex, get());
+        return Graph.traversablePath(rVertex, mVertex, get());
     }
 }

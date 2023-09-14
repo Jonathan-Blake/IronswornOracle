@@ -59,7 +59,7 @@ public class AtLocation implements Constraint<NamedCampaignItem> {
 
     @Override
     public boolean test(Vertex<NamedCampaignItem> at, Vertex<NamedCampaignItem> location) {
-        return Graph.search(at, location, get());
+        return Graph.traversablePath(at, location, get());
     }
 
 

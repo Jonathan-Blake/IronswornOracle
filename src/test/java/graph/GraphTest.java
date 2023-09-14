@@ -1,6 +1,7 @@
 package graph;
 
 import graph.constraints.AtLocation;
+import graph.search.Criteria;
 import graph.structs.CampaignLocation;
 import graph.structs.NPC;
 import graph.structs.NamedCampaignItem;
@@ -48,7 +49,7 @@ class GraphTest {
 
         @Override
         public boolean test(Vertex<Integer> a, Vertex<Integer> b) {
-            return Graph.search(a, b, get());
+            return Graph.traversablePath(a, b, get());
         }
 
         private static final Relationship LT = new Relationship() {
@@ -60,6 +61,11 @@ class GraphTest {
             @Override
             public String getRelationship() {
                 return null;
+            }
+
+            @Override
+            public String toString() {
+                return "Less Than";
             }
         };
 
@@ -74,9 +80,44 @@ class GraphTest {
             public String getRelationship() {
                 return null;
             }
+
+            @Override
+            public String toString() {
+                return "Greater Than";
+            }
         };
 
 
+    }
+
+    private static class IntegerCriteria {
+        public static Criteria<Integer> is(int i) {
+            return new Criteria<>() {
+                @Override
+                public boolean match(Vertex<Integer> object) {
+                    return object.getContents() == i;
+                }
+
+                @Override
+                public Criteria<Integer> orElse() {
+                    return null;
+                }
+            };
+        }
+
+        public static Criteria<Integer> greatest() {
+            return new Criteria<>() {
+                @Override
+                public boolean match(Vertex<Integer> object) {
+                    return !object.getAdjacent().containsValue(GreaterThan.get());
+                }
+
+                @Override
+                public Criteria<Integer> orElse() {
+                    return null;
+                }
+            };
+        }
     }
 
     @Nested
@@ -179,6 +220,47 @@ class GraphTest {
             g.addVertex(sunny_town);
             assertTrue(g.addEdge(AtLocation.get(), sunny_town, frank));
         }
+
+        @Test
+        void test_Search_FindsRightNumber_IsolatedGraph() {
+            Graph<Integer> g = new Graph<>();
+            assertTrue(g.addVertex(1));
+            assertTrue(g.addVertex(2));
+            assertTrue(g.addVertex(3));
+
+            assertEquals(g.getVertex(3), g.search(Criteria.allOf(IntegerCriteria.is(3)).build()));
+            assertEquals(g.getVertex(2), g.search(Criteria.allOf(IntegerCriteria.is(2)).build()));
+            assertEquals(g.getVertex(1), g.search(Criteria.allOf(IntegerCriteria.is(1)).build()));
+            assertNull(g.search(Criteria.allOf(IntegerCriteria.is(0)).build()));
+            assertNull(g.search(Criteria.allOf(IntegerCriteria.is(4)).build()));
+        }
+
+        @Test
+        void test_Search_FindsRightNumber_OnSecondaryCriteria() {
+            Graph<Integer> g = new Graph<>();
+            g.addEdge(GreaterThan.get(), 1, 2);
+            g.addEdge(GreaterThan.get(), 2, 3);
+            System.out.println(g.getVertex(1).getAdjacent());
+            System.out.println(g.getVertex(2).getAdjacent());
+            System.out.println(g.getVertex(3).getAdjacent());
+
+            assertNull(g.search(
+                    Criteria.allOf(IntegerCriteria.is(4)).build()));
+            assertEquals(g.getVertex(3), g.search(
+                    Criteria.allOf(IntegerCriteria.is(4))
+                            .orElse(IntegerCriteria.greatest()).build()));
+        }
+
+        @Test
+        void test_Search_ReturnsNullIfNoSuchNumber_IsolatedGraph() {
+            Graph<Integer> g = new Graph<>();
+            assertTrue(g.addVertex(1));
+            assertTrue(g.addVertex(2));
+            assertTrue(g.addVertex(3));
+
+            assertNull(g.search(Criteria.allOf(IntegerCriteria.is(0)).build()));
+            assertNull(g.search(Criteria.allOf(IntegerCriteria.is(4)).build()));
+        }
     }
 
     @Nested
@@ -203,8 +285,8 @@ class GraphTest {
             final Vertex<Integer> fiftyNineVertex = g.getVertex(59);
             assertNotNull(oneVertex);
             assertNotNull(fiftyNineVertex);
-            assertTrue(Graph.search(oneVertex, fiftyNineVertex, GreaterThan.get()));
-            assertFalse(Graph.search(fiftyNineVertex, oneVertex, GreaterThan.get()));
+            assertTrue(Graph.traversablePath(oneVertex, fiftyNineVertex, GreaterThan.get()));
+            assertFalse(Graph.traversablePath(fiftyNineVertex, oneVertex, GreaterThan.get()));
             assertFalse(Graph.detectRelationshipCycle(oneVertex, GreaterThan.get()));
         }
     }
