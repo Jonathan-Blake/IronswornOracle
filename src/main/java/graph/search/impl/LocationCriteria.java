@@ -4,6 +4,7 @@ import graph.constraints.AtLocation;
 import graph.constraints.LocationContains;
 import graph.search.Criteria;
 import graph.search.SinglePredicateCriteria;
+import graph.structs.CampaignLocation;
 import graph.structs.NamedCampaignItem;
 
 public class LocationCriteria {
@@ -33,5 +34,9 @@ public class LocationCriteria {
                         entry.getValue() == LocationContains.get() ||
                                 entry.getValue() == AtLocation.get()
                 )));
+    }
+
+    public static Criteria<NamedCampaignItem> isLocation() {
+        return new SinglePredicateCriteria<>(vertex -> vertex.getContents() instanceof CampaignLocation);
     }
 }

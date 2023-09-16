@@ -11,6 +11,10 @@ import java.util.List;
 public class Get extends BaseQuestAction {
     private ItemData item;
 
+    public Get() {
+        super("get");
+    }
+
     @Override
     public void updateObjectives(Objective objectives) {
         objectives.setItemAcquired(item);

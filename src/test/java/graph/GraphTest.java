@@ -1,16 +1,25 @@
 package graph;
 
 import graph.constraints.AtLocation;
+import graph.constraints.IsAfter;
+import graph.constraints.IsBefore;
+import graph.constraints.IsDuring;
 import graph.search.Criteria;
 import graph.structs.CampaignLocation;
 import graph.structs.NPC;
 import graph.structs.NamedCampaignItem;
+import ironsworn.Campaign;
+import ironsworn.StoryTeller;
+import ironsworn.actions.QuestAction;
+import ironsworn.actions.Subquest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -260,6 +269,53 @@ class GraphTest {
 
             assertNull(g.search(Criteria.allOf(IntegerCriteria.is(0)).build()));
             assertNull(g.search(Criteria.allOf(IntegerCriteria.is(4)).build()));
+        }
+    }
+
+    @Nested
+    class TemporalGraph {
+        @Test
+        void assignSetsRelativePositions() {
+            final Campaign campaign = new Campaign();
+            StoryTeller storyTeller = new StoryTeller(campaign);
+            Subquest root = storyTeller.assignActions(List.of("learn", "kill", "goto"));
+            final Vertex<NamedCampaignItem> learn = campaign.getVertex(root.getSubActions().get(0));
+            final Vertex<NamedCampaignItem> kill = campaign.getVertex(root.getSubActions().get(1));
+            final Vertex<NamedCampaignItem> GoTo = campaign.getVertex(root.getSubActions().get(2));
+            assertTrue(new IsBefore().test(GoTo, learn));
+            assertTrue(new IsBefore().test(GoTo, kill));
+            assertFalse(new IsBefore().test(learn, GoTo));
+            assertFalse(new IsBefore().test(kill, GoTo));
+            assertTrue(new IsAfter().test(learn, GoTo));
+            assertTrue(new IsAfter().test(kill, GoTo));
+            assertFalse(new IsAfter().test(GoTo, learn));
+            assertFalse(new IsAfter().test(GoTo, kill));
+        }
+
+        @Test
+        void expandSetsRelativePositions() {
+            final Campaign campaign = new Campaign();
+            StoryTeller storyTeller = new StoryTeller(campaign);
+            Subquest root = storyTeller.assignActions(List.of("learn", "kill", "goto"));
+            final Vertex<NamedCampaignItem> learn = campaign.getVertex(root.getSubActions().get(0));
+            final Vertex<NamedCampaignItem> kill = campaign.getVertex(root.getSubActions().get(1));
+            final Vertex<NamedCampaignItem> GoTo = campaign.getVertex(root.getSubActions().get(2));
+            ((QuestAction) kill.getContents()).expand(storyTeller);
+            Vertex<NamedCampaignItem> GoToTarget = campaign.getVertex(((QuestAction) kill.getContents()).getSubActions().get(0));
+            Vertex<NamedCampaignItem> killTarget = campaign.getVertex(((QuestAction) kill.getContents()).getSubActions().get(1));
+            assertTrue(new IsDuring().test(GoToTarget, kill));
+            assertTrue(new IsDuring().test(kill, killTarget));
+            assertFalse(new IsDuring().test(learn, kill));
+            assertFalse(new IsDuring().test(kill, GoTo));
+
+            assertTrue(new IsBefore().test(GoToTarget, learn));
+            assertTrue(new IsBefore().test(killTarget, learn));
+            assertFalse(new IsBefore().test(GoToTarget, GoTo));
+            assertFalse(new IsBefore().test(killTarget, GoTo));
+            assertTrue(new IsAfter().test(GoToTarget, GoTo));
+            assertTrue(new IsAfter().test(killTarget, GoTo));
+            assertFalse(new IsAfter().test(GoTo, GoToTarget));
+            assertFalse(new IsAfter().test(GoTo, killTarget));
         }
     }
 

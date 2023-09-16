@@ -13,6 +13,7 @@ public class Subquest extends BaseQuestAction {
     private boolean expandable = true;
 
     public Subquest(List<QuestAction> questActions) {
+        super("subquest");
         this.actions = questActions;
     }
 
@@ -23,7 +24,7 @@ public class Subquest extends BaseQuestAction {
 //            tmp.removeIf(action -> !action.isExpandable());
             tmp.sort(Comparator.comparing(QuestAction::countNodes));// Expand smallest first wide shallow trees
             // Collections.shuffle(tmp); // Randomly expand
-            // tmp.sort(Comparator.comparing(QuestAction::countNodes)); // deep
+            // tmp.sort(Comparator.comparing(QuestAction::countNodes).reversed()); // deep
             for (QuestAction questAction : tmp) {
                 if (questAction.expand(storyTeller)) {
                     return true;

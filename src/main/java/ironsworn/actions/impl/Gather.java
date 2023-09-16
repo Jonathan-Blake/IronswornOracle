@@ -9,6 +9,10 @@ import ironsworn.structs.ItemData;
 public class Gather extends BaseQuestAction {
     private ItemData item;
 
+    public Gather() {
+        super("gather");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         assert (objectives.getItemAcquired() != null || objectives.getItemUsed() != null);

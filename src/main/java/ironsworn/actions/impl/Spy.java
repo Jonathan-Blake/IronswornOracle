@@ -11,6 +11,10 @@ import java.util.List;
 public class Spy extends BaseQuestAction {
     private EnemyData target;
 
+    public Spy() {
+        super("spy");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         target = storyTeller.GetEnemy();

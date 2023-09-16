@@ -3,6 +3,7 @@ package ironsworn;
 import grammar.Motivation;
 import grammar.Quest;
 import grammar.QuestLine;
+import graph.constraints.IsAfter;
 import ironsworn.actions.QuestAction;
 import ironsworn.actions.Subquest;
 import ironsworn.structs.EnemyData;
@@ -16,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class StoryTeller {
-    final Campaign campaign;
+    public final Campaign campaign;
 
     public StoryTeller(Campaign campaign) {
         this.campaign = campaign;
@@ -47,6 +48,9 @@ public class StoryTeller {
         for (String keyword : reversed) {
             QuestAction action = QuestAction.getFromKeyword(keyword)
                     .initialise(objectives, this);
+            if (objectives.getPreviousGoal() != null) {
+                campaign.addEdge(IsAfter.get(), action, objectives.getPreviousGoal());
+            }
             objectives.setPreviousGoal(action);
             questActions.add(0, action);
         }
@@ -55,18 +59,18 @@ public class StoryTeller {
     }
 
     public NPCData GetFriendlyNPC() {
-        return campaign.GetFriendlyNPC();
+        return campaign.getFriendlyNPC();
     }
 
     public LocationData GetLocation() {
-        return campaign.GetLocation();
+        return campaign.getLocation();
     }
 
     public EnemyData GetEnemy() {
-        return campaign.GetEnemy();
+        return campaign.getEnemy();
     }
 
     public ItemData GetItem() {
-        return campaign.GetItem();
+        return campaign.getItem();
     }
 }

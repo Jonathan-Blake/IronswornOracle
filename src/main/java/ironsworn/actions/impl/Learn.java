@@ -10,6 +10,10 @@ import java.util.List;
 public class Learn extends BaseQuestAction {
     private String subject;
 
+    public Learn() {
+        super("learn");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         this.subject = storyTeller.GetFriendlyNPC().name;
@@ -18,7 +22,7 @@ public class Learn extends BaseQuestAction {
 
     @Override
     public String getActionText() {
-        return "learn about "+subject;
+        return "learn about " + subject;
     }
 
     @Override

@@ -9,6 +9,10 @@ import ironsworn.structs.NPCData;
 public class Listen extends BaseQuestAction {
     private NPCData target;
 
+    public Listen() {
+        super("listen");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         this.target = storyTeller.GetFriendlyNPC();

@@ -15,6 +15,10 @@ public class GoTo extends BaseQuestAction {
     private LocationData location;
     private boolean enemy;
 
+    public GoTo() {
+        super("goto");
+    }
+
     @Override
     public void updateObjectives(Objective objectives) {
         if (target != null) {
@@ -46,7 +50,7 @@ public class GoTo extends BaseQuestAction {
 
     @Override
     public String getActionText() {
-        return ("go to %s".formatted(location.name))+(target!= null? " and meet "+target:"");
+        return ("go to %s".formatted(location.getName())) + (target != null ? " and meet " + target : "");
     }
 
     @Override

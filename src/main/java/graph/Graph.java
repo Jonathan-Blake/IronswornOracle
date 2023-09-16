@@ -13,17 +13,17 @@ public class Graph<T> {
         this.adjacency = new HashMap<>();
     }
 
-    public static <T> boolean detectRelationshipCycle(Vertex<T> start, Relationship relationship) {
-        return relationshipCycleHelper(start, relationship, new HashMap<>());
+    public static <T> boolean detectRelationshipCycle(Vertex<T> start, Relationship... relationship) {
+        return relationshipCycleHelper(start, List.of(relationship), new HashMap<>());
     }
 
     private static <T> boolean relationshipCycleHelper(Vertex<T> start,
-                                                       Relationship relationship,
+                                                       List<Relationship> relationship,
                                                        Map<Vertex<T>, color> vertexColorMap
     ) {
         vertexColorMap.put(start, color.GRAY);
         for (Map.Entry<Vertex<T>, Relationship> entry : start.getAdjacent().entrySet()) {
-            if (relationship != entry.getValue()) {
+            if (!relationship.contains(entry.getValue())) {
                 continue;
             }
             if (vertexColorMap.get(entry.getKey()) == color.GRAY) {
@@ -40,22 +40,22 @@ public class Graph<T> {
         return false;
     }
 
-    public static <T> boolean traversablePath(Vertex<T> start, Vertex<T> end, Relationship relationship) {
-        return traversablePathhelper(start, end, relationship, new HashMap<>());
+    public static <T> boolean traversablePath(Vertex<T> start, Vertex<T> end, Relationship... relationship) {
+        return traversablePathhelper(start, end, List.of(relationship), new HashMap<>());
     }
 
     private static <T> boolean traversablePathhelper(Vertex<T> start,
                                                      Vertex<T> end,
-                                                     Relationship relationship,
+                                                     List<Relationship> relationship,
                                                      Map<Vertex<T>, color> vertexColorMap
     ) {
         final Map<Vertex<T>, Relationship> entries = start.getAdjacent();
-        if (entries.containsKey(end) && entries.get(end) == relationship) {
+        if (entries.containsKey(end) && relationship.contains(entries.get(end))) {
             return true;
         }
         vertexColorMap.put(start, color.GRAY);
         for (Map.Entry<Vertex<T>, Relationship> entry : entries.entrySet()) {
-            if (relationship != entry.getValue()) {
+            if (!relationship.contains(entry.getValue())) {
                 continue;
             }
             if (vertexColorMap.computeIfAbsent(entry.getKey(), key -> color.WHITE) == color.WHITE &&

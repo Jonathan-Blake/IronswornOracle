@@ -11,6 +11,10 @@ import java.util.List;
 public class Kill extends BaseQuestAction {
     private EnemyData enemyAttacking;
 
+    public Kill() {
+        super("kill");
+    }
+
     @Override
     public void updateObjectives(Objective objectives) {
         objectives.setEnemyAttacking(enemyAttacking);
@@ -26,7 +30,7 @@ public class Kill extends BaseQuestAction {
 
     @Override
     public String getActionText() {
-        return "Kill %s at %s".formatted(enemyAttacking.name, enemyAttacking.location.name);
+        return "Kill %s at %s".formatted(enemyAttacking.name, enemyAttacking.location.getName());
     }
 
     @Override

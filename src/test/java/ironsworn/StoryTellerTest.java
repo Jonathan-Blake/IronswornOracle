@@ -27,8 +27,8 @@ class StoryTellerTest {
     @Test
     void assignActions() {
         StoryTeller storyTeller = new StoryTeller(mockCampaign);
-        when(mockCampaign.GetEnemy()).thenReturn(new EnemyData("Bob",new LocationData("BobTown"), null));
-        when(mockCampaign.GetFriendlyNPC()).thenReturn( new NPCData("Steve", new LocationData("Tutorial Village")));
+        when(mockCampaign.getEnemy()).thenReturn(new EnemyData("Bob", new LocationData("BobTown"), null));
+        when(mockCampaign.getFriendlyNPC()).thenReturn(new NPCData("Steve", new LocationData("Tutorial Village")));
 
         Subquest ret = storyTeller.assignActions(List.of("goto", "kill", "goto", "report"));
 
@@ -38,15 +38,15 @@ class StoryTellerTest {
     @Test
     void createNewQuest() {
         StoryTeller storyTeller = new StoryTeller(mockCampaign);
-        Mockito.lenient().when(mockCampaign.GetEnemy()).thenReturn(new EnemyData("Bob",new LocationData("BobTown"), null));
-        Mockito.lenient().when(mockCampaign.GetFriendlyNPC()).thenReturn( new NPCData("Steve", new LocationData("Tutorial Village")));
-        Mockito.lenient().when(mockCampaign.GetLocation()).thenReturn(new LocationData("Peaceful Waterfall"));
-        Mockito.lenient().when(mockCampaign.GetItem()).thenReturn(new ItemData("Thing-a-majig"));
+        Mockito.lenient().when(mockCampaign.getEnemy()).thenReturn(new EnemyData("Bob", new LocationData("BobTown"), null));
+        Mockito.lenient().when(mockCampaign.getFriendlyNPC()).thenReturn(new NPCData("Steve", new LocationData("Tutorial Village")));
+        Mockito.lenient().when(mockCampaign.getLocation()).thenReturn(new LocationData("Peaceful Waterfall"));
+        Mockito.lenient().when(mockCampaign.getItem()).thenReturn(new ItemData("Thing-a-majig"));
 
         Quest ret = storyTeller.createNewQuest(Motivation.Knowledge, 10);
 
         System.out.println(ret.size());
         System.out.println(ret.getFullText());
-        assertTrue(ret.size() >= 6, "Expected size to be greater than 5 but was  "+ret.size());
+        assertTrue(ret.size() >= 6, "Expected size to be greater than 5 but was  " + ret.size());
     }
 }

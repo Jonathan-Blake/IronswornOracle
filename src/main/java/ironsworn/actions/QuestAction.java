@@ -1,5 +1,7 @@
 package ironsworn.actions;
 
+import graph.constraints.IsDuring;
+import graph.structs.QuestNode;
 import ironsworn.InvalidActionException;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
@@ -8,48 +10,36 @@ import ironsworn.actions.impl.*;
 
 import java.util.*;
 
-public abstract class QuestAction {
+public abstract class QuestAction extends QuestNode {
     private List<QuestAction> subActions = new LinkedList<>();
     private boolean expandable = true;
 
-    public static QuestAction getFromKeyword(String keyword){
-        switch (keyword) {
-//            case "Defend": return new Defend();
-            case "explore":
-                return new Explore();
-            case "gather":
-                return new Gather();
-            case "give":
-                return new Give();
-            case "get":
-                return new Get();
-            case "goto":
-                return new GoTo();
-            case "kill":
-                return new Kill();
-            case "listen":
-                return new Listen();
-            case "report":
-                return new Report();
-            case "use":
-                return new Use();
-            case "learn":
-                return new Learn();
-            case "spy":
-                return new Spy();
-            case "steal":
-                return new Steal();
-            case "stealth":
-                return new Stealth();
-            case "read":
-                return new Read();
-            default:
-                throw new InvalidActionException(keyword);
-        }
+    protected QuestAction(String name) {
+        super(name);
+    }
+
+    public static QuestAction getFromKeyword(String keyword) {
+        return switch (keyword) {
+            case "explore" -> new Explore();
+            case "gather" -> new Gather();
+            case "give" -> new Give();
+            case "get" -> new Get();
+            case "goto" -> new GoTo();
+            case "kill" -> new Kill();
+            case "listen" -> new Listen();
+            case "report" -> new Report();
+            case "use" -> new Use();
+            case "learn" -> new Learn();
+            case "spy" -> new Spy();
+            case "steal" -> new Steal();
+            case "stealth" -> new Stealth();
+            case "read" -> new Read();
+            default -> throw new InvalidActionException(keyword);
+        };
     }
 
     public static int countNodes(QuestAction node) {
-        if(node.getSubActions().isEmpty()){
+        if (node.getSubActions().isEmpty()) {
             return 1;
         } else {
             return node.getSubActions().stream().mapToInt(QuestAction::countNodes).sum();
@@ -90,7 +80,9 @@ public abstract class QuestAction {
                 } else {
                     final Objective objective = new Objective();
                     updateObjectives(objective);
-                    this.setSubActions(storyTeller.assignActions(nextSteps, objective).getSubActions());
+                    final List<QuestAction> internalActions = storyTeller.assignActions(nextSteps, objective).getSubActions();
+                    this.setSubActions(internalActions);
+                    internalActions.forEach(questAction -> storyTeller.campaign.addEdge(IsDuring.get(), this, questAction));
                     return true;
                 }
             } else {

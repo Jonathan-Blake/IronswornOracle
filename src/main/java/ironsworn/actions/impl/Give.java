@@ -11,6 +11,10 @@ public class Give extends BaseQuestAction {
     private ItemData item;
     private NPCData target;
 
+    public Give() {
+        super("give");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         assert objectives.getReportingTo() == null && objectives.getItemAcquired() == null;
@@ -23,6 +27,6 @@ public class Give extends BaseQuestAction {
 
     @Override
     public String getActionText() {
-        return "Give %s to %s at %s".formatted(item.name, target.name, target.location.name);
+        return "Give %s to %s at %s".formatted(item.name, target.name, target.location.getName());
     }
 }

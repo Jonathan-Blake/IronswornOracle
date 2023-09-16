@@ -9,6 +9,10 @@ import ironsworn.structs.NPCData;
 public class Report extends BaseQuestAction {
     private NPCData reportingTo;
 
+    public Report() {
+        super("report");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         assert objectives.getReportingTo() == null;

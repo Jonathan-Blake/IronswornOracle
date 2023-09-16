@@ -1,20 +1,20 @@
 package ironsworn.structs;
 
-import java.io.Serializable;
+import graph.structs.NamedCampaignItem;
+
 import java.util.LinkedList;
 import java.util.List;
 
-public class LocationData implements Serializable {
-    public String name;
+public class LocationData extends NamedCampaignItem {
     public List<EnemyData> enemies;
     public NPCData[] npcs;
 
     public LocationData(String name) {
-        this.name = name;
+        super(name);
     }
 
     public boolean contains(EnemyData enemyData) {
-        if(enemies == null){
+        if (enemies == null) {
             return false;
         } else {
             return enemies.contains(enemyData);

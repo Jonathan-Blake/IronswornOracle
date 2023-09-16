@@ -9,6 +9,10 @@ import ironsworn.structs.ItemData;
 public class Use extends BaseQuestAction {
     private ItemData item;
 
+    public Use() {
+        super("use");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         assert objectives.getItemUsed() == null;

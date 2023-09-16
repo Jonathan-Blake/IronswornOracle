@@ -11,6 +11,10 @@ import java.util.List;
 public class Steal extends BaseQuestAction {
     private ItemData item;
 
+    public Steal() {
+        super("steal");
+    }
+
     @Override
     public void updateObjectives(Objective objectives) {
         objectives.setItemAcquired(item);

@@ -8,6 +8,10 @@ import ironsworn.actions.QuestAction;
 public class Stealth extends BaseQuestAction {
     private String target;
 
+    public Stealth() {
+        super("stealth");
+    }
+
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         if (objectives.getEnemyAttacking() != null) {

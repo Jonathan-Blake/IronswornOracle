@@ -47,4 +47,8 @@ public class Objective {
     public void setPreviousGoal(QuestAction action) {
         previousAction = action;
     }
+
+    public QuestAction getPreviousGoal() {
+        return previousAction;
+    }
 }

@@ -9,6 +9,10 @@ import ironsworn.structs.ItemData;
 public class Read extends BaseQuestAction {
     private ItemData target;
 
+    public Read() {
+        super("read");
+    }
+
     @Override
     public void updateObjectives(Objective objectives) {
         objectives.setItemAcquired(target);
