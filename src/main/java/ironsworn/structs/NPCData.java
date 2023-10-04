@@ -1,15 +1,14 @@
 package ironsworn.structs;
 
-import java.io.Serializable;
+import graph.structs.NamedCampaignItem;
 
-public class NPCData implements Serializable {
-    public String name;
+public class NPCData extends NamedCampaignItem {
     public LocationData location;
     public ItemData[] loot;
-    boolean friendly;
+    public Opinion opinion;
 
     public NPCData(String name, LocationData location) {
-        this.name = name;
+        super(name);
         this.location = location;
     }
 }

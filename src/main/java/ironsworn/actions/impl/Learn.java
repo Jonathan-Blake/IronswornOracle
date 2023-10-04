@@ -1,11 +1,16 @@
 package ironsworn.actions.impl;
 
+import graph.search.Criteria;
+import graph.search.impl.CampaignObjectCriteria;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
 import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
+import ironsworn.structs.NPCBuilder;
 
 import java.util.List;
+
+import static ironsworn.structs.Opinion.FRIENDLY;
 
 public class Learn extends BaseQuestAction {
     private String subject;
@@ -16,7 +21,9 @@ public class Learn extends BaseQuestAction {
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
-        this.subject = storyTeller.GetFriendlyNPC().name;
+        this.subject = storyTeller.getFriendlyNPC(
+                Criteria.anyOf(CampaignObjectCriteria.hasName("Frank")).build()
+        ).orElseGet(() -> storyTeller.createNPC(new NPCBuilder().name("Frank").relationship(FRIENDLY))).getName();
         return this;
     }
 

@@ -78,6 +78,15 @@ public class Graph<T> {
         }
     }
 
+    public boolean removeVertex(T item) {
+        final List<Edge<T>> edges = new ArrayList<>(adjacency.remove(getVertex(item)));
+        boolean successfullyRemoved = edges.stream().allMatch(this::removeEdge);
+        if (!successfullyRemoved) {
+            throw new RuntimeException("Failed to remove edge vertex for some reason");
+        }
+        return true;
+    }
+
     public Vertex<T> search(Criteria<T> searchCriteria) {
         final HashMap<Vertex<T>, color> vertexColorMap = new HashMap<>();
         Vertex<T> ret = null;
@@ -132,14 +141,26 @@ public class Graph<T> {
     public boolean addEdge(Relationship edgeType, T a, T b) {
         Vertex<T> aNode = addVertexHelper(a);
         Vertex<T> bNode = addVertexHelper(b);
-        Edge<T> edge = aNode.link(bNode, edgeType);
+        return addEdge(edgeType, aNode, bNode);
+    }
+
+    public boolean addEdge(Relationship edgeType, Vertex<T> a, Vertex<T> b) {
+        assert adjacency.containsKey(a) && adjacency.containsKey(b);
+        Edge<T> edge = a.link(b, edgeType);
         if (testRules(edge)) {
             return true;
         } else {
-            aNode.edges.remove(edge);
-            bNode.edges.remove(edge);
+            a.edges.remove(edge);
+            b.edges.remove(edge);
             return false;
         }
+    }
+
+    private boolean removeEdge(Edge<T> tEdge) {
+        return (tEdge.a.edges.remove(tEdge)
+                && adjacency.get(tEdge.a).remove(tEdge)
+                && tEdge.b.edges.remove(tEdge)
+                && adjacency.get(tEdge.b).remove(tEdge));
     }
 
     private boolean testRules(Edge<T> edge) {

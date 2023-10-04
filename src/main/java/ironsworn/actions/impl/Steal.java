@@ -29,7 +29,7 @@ public class Steal extends BaseQuestAction {
 
     @Override
     public String getActionText() {
-        return "steal "+item.name;
+        return "steal " + item.getName();
     }
 
     @Override

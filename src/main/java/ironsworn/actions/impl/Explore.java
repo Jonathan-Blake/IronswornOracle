@@ -1,9 +1,11 @@
 package ironsworn.actions.impl;
 
+import graph.search.Criteria;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
 import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
+import ironsworn.structs.LocationBuilder;
 import ironsworn.structs.LocationData;
 
 public class Explore extends BaseQuestAction {
@@ -20,7 +22,7 @@ public class Explore extends BaseQuestAction {
         } else if (objectives.getEnemyAttacking() != null) {
             location = objectives.getEnemyAttacking().location;
         } else {
-            location = storyTeller.GetLocation();
+            location = storyTeller.getLocation(Criteria.noRequirements()).orElseGet(() -> storyTeller.createLocation(new LocationBuilder()));
         }
         return this;
     }

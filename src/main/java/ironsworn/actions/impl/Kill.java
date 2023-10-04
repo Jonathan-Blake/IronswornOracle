@@ -1,15 +1,19 @@
 package ironsworn.actions.impl;
 
+import graph.constraints.IsDuring;
+import graph.search.Criteria;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
 import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
-import ironsworn.structs.EnemyData;
+import ironsworn.structs.NPCBuilder;
+import ironsworn.structs.NPCData;
+import ironsworn.structs.Opinion;
 
 import java.util.List;
 
 public class Kill extends BaseQuestAction {
-    private EnemyData enemyAttacking;
+    private NPCData enemyAttacking;
 
     public Kill() {
         super("kill");
@@ -22,15 +26,22 @@ public class Kill extends BaseQuestAction {
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
-        assert objectives.getEnemyAttacking() == null;
-        enemyAttacking = storyTeller.GetEnemy();
-        objectives.setEnemyAttacking(enemyAttacking);
+        assert (objectives.getEnemyAttacking() == null || storyTeller.campaign.getVertex(this)
+                .getAdjacent().entrySet().stream()
+                .filter(kv -> kv.getValue().equals(IsDuring.get()))
+                .anyMatch(kv -> kv.getKey().getContents() instanceof Kill));
+        if (objectives.getEnemyAttacking() != null) {
+            enemyAttacking = objectives.getEnemyAttacking();
+        } else {
+            enemyAttacking = storyTeller.getEnemy(Criteria.noRequirements()).orElseGet(() -> storyTeller.createNPC(new NPCBuilder().relationship(Opinion.ENEMY)));
+            objectives.setEnemyAttacking(enemyAttacking);
+        }
         return this;
     }
 
     @Override
     public String getActionText() {
-        return "Kill %s at %s".formatted(enemyAttacking.name, enemyAttacking.location.getName());
+        return "Kill %s at %s".formatted(enemyAttacking.getName(), enemyAttacking.location.getName());
     }
 
     @Override

@@ -290,6 +290,7 @@ class GraphTest {
             assertTrue(new IsAfter().test(kill, GoTo));
             assertFalse(new IsAfter().test(GoTo, learn));
             assertFalse(new IsAfter().test(GoTo, kill));
+            System.out.println(QuestAction.printIndentedTree(root, 0));
         }
 
         @Test
@@ -316,6 +317,7 @@ class GraphTest {
             assertTrue(new IsAfter().test(killTarget, GoTo));
             assertFalse(new IsAfter().test(GoTo, GoToTarget));
             assertFalse(new IsAfter().test(GoTo, killTarget));
+            System.out.println(QuestAction.printIndentedTree(root, 0));
         }
     }
 

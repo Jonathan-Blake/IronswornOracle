@@ -37,7 +37,7 @@ public class Get extends BaseQuestAction {
 
     @Override
     public String getActionText() {
-        return "get %s".formatted(item.name);
+        return "get %s".formatted(item.getName());
     }
 
     @Override

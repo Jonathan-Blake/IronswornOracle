@@ -1,12 +1,11 @@
 package ironsworn.actions;
 
-import graph.constraints.IsDuring;
 import graph.structs.QuestNode;
 import ironsworn.InvalidActionException;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
-import ironsworn.Utility;
 import ironsworn.actions.impl.*;
+import ironsworn.utility.Utility;
 
 import java.util.*;
 
@@ -22,8 +21,8 @@ public abstract class QuestAction extends QuestNode {
         return switch (keyword) {
             case "explore" -> new Explore();
             case "gather" -> new Gather();
-            case "give" -> new Give();
             case "get" -> new Get();
+            case "give" -> new Give();
             case "goto" -> new GoTo();
             case "kill" -> new Kill();
             case "listen" -> new Listen();
@@ -78,11 +77,10 @@ public abstract class QuestAction extends QuestNode {
                     expandable = false;
                     return false;
                 } else {
-                    final Objective objective = new Objective();
+                    final Objective objective = new Objective(storyTeller.campaign);
                     updateObjectives(objective);
-                    final List<QuestAction> internalActions = storyTeller.assignActions(nextSteps, objective).getSubActions();
+                    final List<QuestAction> internalActions = storyTeller.assignActions(nextSteps, objective, this).getSubActions();
                     this.setSubActions(internalActions);
-                    internalActions.forEach(questAction -> storyTeller.campaign.addEdge(IsDuring.get(), this, questAction));
                     return true;
                 }
             } else {

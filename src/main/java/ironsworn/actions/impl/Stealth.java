@@ -15,7 +15,7 @@ public class Stealth extends BaseQuestAction {
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
         if (objectives.getEnemyAttacking() != null) {
-            target = objectives.getEnemyAttacking().name;
+            target = objectives.getEnemyAttacking().getName();
         }
         return this;
     }

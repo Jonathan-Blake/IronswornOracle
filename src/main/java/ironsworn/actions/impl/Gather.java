@@ -28,7 +28,7 @@ public class Gather extends BaseQuestAction {
 
     @Override
     public String getActionText() {
-        return "gather %s".formatted(item.name);
+        return "gather %s".formatted(item.getName());
     }
 
 }

@@ -1,15 +1,18 @@
 package ironsworn.actions.impl;
 
+import graph.search.Criteria;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
 import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
-import ironsworn.structs.EnemyData;
+import ironsworn.structs.NPCBuilder;
+import ironsworn.structs.NPCData;
+import ironsworn.structs.Opinion;
 
 import java.util.List;
 
 public class Spy extends BaseQuestAction {
-    private EnemyData target;
+    private NPCData target;
 
     public Spy() {
         super("spy");
@@ -17,13 +20,13 @@ public class Spy extends BaseQuestAction {
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
-        target = storyTeller.GetEnemy();
+        target = storyTeller.getEnemy(Criteria.noRequirements()).orElseGet(() -> storyTeller.createNPC(new NPCBuilder().relationship(Opinion.ENEMY)));
         return this;
     }
 
     @Override
     public String getActionText() {
-        return "spy on %s".formatted(target.name);
+        return "spy on %s".formatted(target.getName());
     }
 
     @Override

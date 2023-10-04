@@ -4,17 +4,15 @@ import grammar.Motivation;
 import grammar.Quest;
 import grammar.QuestLine;
 import graph.constraints.IsAfter;
+import graph.constraints.IsDuring;
+import graph.search.Criteria;
+import graph.structs.NamedCampaignItem;
 import ironsworn.actions.QuestAction;
 import ironsworn.actions.Subquest;
-import ironsworn.structs.EnemyData;
-import ironsworn.structs.ItemData;
-import ironsworn.structs.LocationData;
-import ironsworn.structs.NPCData;
+import ironsworn.structs.*;
+import ironsworn.utility.Utility;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class StoryTeller {
     public final Campaign campaign;
@@ -36,21 +34,24 @@ public class StoryTeller {
     }
 
     public Subquest assignActions(final List<String> actions) {
-        return assignActions(actions, new Objective());
+        return assignActions(actions, new Objective(this.campaign), null);
     }
 
-    public Subquest assignActions(final List<String> actions, final Objective objectives) {
+    public Subquest assignActions(final List<String> actions, final Objective objectives, QuestAction parent) {
         System.out.println("Assigning: " + actions);
         List<String> reversed = new ArrayList<>(actions);
         Collections.reverse(reversed);
 
         List<QuestAction> questActions = new LinkedList<>();
         for (String keyword : reversed) {
-            QuestAction action = QuestAction.getFromKeyword(keyword)
-                    .initialise(objectives, this);
+            QuestAction action = QuestAction.getFromKeyword(keyword);
             if (objectives.getPreviousGoal() != null) {
                 campaign.addEdge(IsAfter.get(), action, objectives.getPreviousGoal());
             }
+            if (parent != null) {
+                campaign.addEdge(IsDuring.get(), parent, action);
+            }
+            action.initialise(objectives, this);
             objectives.setPreviousGoal(action);
             questActions.add(0, action);
         }
@@ -58,19 +59,49 @@ public class StoryTeller {
         return new Subquest(questActions);
     }
 
-    public NPCData GetFriendlyNPC() {
-        return campaign.getFriendlyNPC();
+    public Optional<NPCData> getFriendlyNPC(Criteria<NamedCampaignItem> requirements) {
+        return campaign.getFriendlyNPC(requirements);
     }
 
-    public LocationData GetLocation() {
-        return campaign.getLocation();
+    public Optional<LocationData> getLocation(Criteria<NamedCampaignItem> requirements) {
+        return (campaign.getLocation(requirements));
     }
 
-    public EnemyData GetEnemy() {
-        return campaign.getEnemy();
+    public Optional<NPCData> getEnemy(Criteria<NamedCampaignItem> requirements) {
+        return (campaign.getEnemy(requirements));
     }
 
-    public ItemData GetItem() {
-        return campaign.getItem();
+    public Optional<ItemData> getItem(Criteria<NamedCampaignItem> requirements) {
+        return (campaign.getItem(requirements));
+    }
+
+    public NPCData createNPC(NPCBuilder parameters) {
+        final NPCData build = parameters.build(this);
+        campaign.create(() -> build, parameters.getRelationships());
+        return build;
+    }
+
+    public ItemData createItem(ItemBuilder parameters) {
+        final ItemData build = parameters.build(this);
+        campaign.create(() -> build, parameters.getRelationships());
+        return build;
+    }
+
+    public LocationData createLocation(LocationBuilder parameters) {
+        final LocationData build = parameters.build(this);
+        campaign.create(() -> build, parameters.getRelationships());
+        return build;
+    }
+
+    public String randomName() {
+        return "Fred";
+    }
+
+    public String randomLocationName() {
+        return "this.LOCATION";
+    }
+
+    public String randomItemName() {
+        return "Spoon";
     }
 }

@@ -53,6 +53,10 @@ public interface Criteria<T> {
         return c;
     }
 
+    static <T> Criteria<T> noRequirements() {
+        return new SinglePredicateCriteria<>(node -> true);
+    }
+
     boolean match(Vertex<T> object);
 
     Criteria<T> orElse();

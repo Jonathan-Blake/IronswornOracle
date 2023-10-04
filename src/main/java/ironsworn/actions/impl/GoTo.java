@@ -1,10 +1,13 @@
 package ironsworn.actions.impl;
 
-import ironsworn.Campaign;
+import graph.search.Criteria;
+import graph.search.impl.CampaignObjectCriteria;
+import graph.search.impl.LocationCriteria;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
 import ironsworn.actions.BaseQuestAction;
 import ironsworn.actions.QuestAction;
+import ironsworn.structs.LocationBuilder;
 import ironsworn.structs.LocationData;
 
 import java.util.List;
@@ -23,27 +26,33 @@ public class GoTo extends BaseQuestAction {
     public void updateObjectives(Objective objectives) {
         if (target != null) {
             if (enemy) {
-                objectives.setEnemyAttacking(Campaign.getEnemy(target, location));
+                objectives.setEnemyAttacking(objectives.campaign().getEnemy(Criteria.allOf(
+                        CampaignObjectCriteria.hasName(target),
+                        LocationCriteria.contentsOfLocation(location)).build()
+                ).orElseThrow());
             } else {
-                objectives.setReportingTo(Campaign.getFriendlyNPC(target, location));
+                objectives.setReportingTo(objectives.campaign().getFriendlyNPC(Criteria.allOf(
+                        CampaignObjectCriteria.hasName(target),
+                        LocationCriteria.contentsOfLocation(location)).build()
+                ).orElseThrow());
             }
         }
     }
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
-        if (objectives.getReportingTo() != null){
+        if (objectives.getReportingTo() != null) {
             location = objectives.getReportingTo().location;
-            target = objectives.getReportingTo().name;
+            target = objectives.getReportingTo().getName();
             enemy = false;
             objectives.setReportingTo(null);
-        } else if(objectives.getEnemyAttacking()!= null){
+        } else if (objectives.getEnemyAttacking() != null) {
             location = objectives.getEnemyAttacking().location;
-            target = objectives.getEnemyAttacking().name;
+            target = objectives.getEnemyAttacking().getName();
             enemy = true;
             objectives.setEnemyAttacking(null);
         } else {
-            location = storyTeller.GetLocation();
+            location = storyTeller.getLocation(Criteria.noRequirements()).orElseGet(() -> storyTeller.createLocation(new LocationBuilder()));
         }
         return this;
     }

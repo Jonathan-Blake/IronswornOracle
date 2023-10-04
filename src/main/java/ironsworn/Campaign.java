@@ -1,57 +1,83 @@
 package ironsworn;
 
 import graph.Graph;
+import graph.Relationship;
 import graph.Vertex;
 import graph.constraints.AtLocation;
 import graph.constraints.IsAfter;
 import graph.search.Criteria;
+import graph.search.impl.ItemCriteria;
 import graph.search.impl.LocationCriteria;
+import graph.search.impl.NPCCriteria;
 import graph.structs.NamedCampaignItem;
-import ironsworn.structs.EnemyData;
 import ironsworn.structs.ItemData;
 import ironsworn.structs.LocationData;
 import ironsworn.structs.NPCData;
+import ironsworn.utility.Tuple;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class Campaign extends Graph<NamedCampaignItem> {
-//    public NPCData[] npcs;
-//    public LocationData[] locations;
-//    public EnemyData[] enemies;
-//    public ItemData[] items;
-//
-//    public SeedData[] knowledgeSeeds;
-//    public SeedData[] comfortSeeds;
-//    public SeedData[] justiceSeeds;
 
     public Campaign() {
         super(new AtLocation(), new IsAfter());// No Cycles in locations or Stories
     }
 
-    public static NPCData getFriendlyNPC(String target, LocationData location) {
-        return new NPCData(target, location);
-    }
-
-    public NPCData getFriendlyNPC() {
-        return new NPCData("Frank", null);
-    }
-
-    public static EnemyData getEnemy(String target, LocationData location) {
-        return new EnemyData(target, location, new ItemData[]{});
-    }
-
-    public EnemyData getEnemy() {
-        return null;
-    }
-
-    public LocationData getLocation() {
-        final Vertex<NamedCampaignItem> search = search(Criteria.allOf(LocationCriteria.isLocation()).build());
-        if (search != null && search.getContents() instanceof LocationData l) {
-            return l;
+    public NamedCampaignItem create(Supplier<NamedCampaignItem> initializer, List<Tuple<Relationship, NamedCampaignItem>> relationships) {
+        final NamedCampaignItem nodeData = initializer.get();
+        addVertex(nodeData);
+        Vertex<NamedCampaignItem> v = getVertex(nodeData);
+        try {
+            relationships.forEach(data -> {
+                if (!addEdge(data.a(), v, getVertex(data.b()))) {
+                    throw new RuntimeException("Failed to initalise");
+                }
+            });
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            removeVertex(nodeData);
+            throw e;
         }
-        return null;
+        return nodeData;
     }
 
+    public Optional<NPCData> getFriendlyNPC(Criteria<NamedCampaignItem> criteria) {
+        return Optional.ofNullable(search(
+                Criteria.allOf(
+                        NPCCriteria.isNPC(),
+                        NPCCriteria.isFriendly(),
+                        criteria
+                ).build()
+        )).map(node -> (NPCData) node.getContents());
+    }
 
-    public ItemData getItem() {
-        return null;
+    public Optional<NPCData> getEnemy(Criteria<NamedCampaignItem> requirements) {
+        return Optional.ofNullable(search(
+                Criteria.allOf(
+                        NPCCriteria.isNPC(),
+                        NPCCriteria.isEnemy(),
+                        requirements
+                ).build()
+        )).map(node -> (NPCData) node.getContents());
+    }
+
+    public Optional<LocationData> getLocation(Criteria<NamedCampaignItem> requirements) {
+        return Optional.ofNullable(search(
+                Criteria.allOf(
+                        LocationCriteria.isLocation(),
+                        requirements
+                ).build()
+        )).map(node -> (LocationData) node.getContents());
+    }
+
+    public Optional<ItemData> getItem(Criteria<NamedCampaignItem> requirements) {
+        return Optional.ofNullable(search(
+                Criteria.allOf(
+                        ItemCriteria.isItem(),
+                        requirements
+                ).build()
+        )).map(node -> (ItemData) node.getContents());
     }
 }

@@ -1,11 +1,10 @@
 package ironsworn.structs;
 
-import java.io.Serializable;
+import graph.structs.NamedCampaignItem;
 
-public class ItemData implements Serializable {
-    public String name;
+public class ItemData extends NamedCampaignItem {
 
     public ItemData(String name) {
-        this.name = name;
+        super(name);
     }
 }

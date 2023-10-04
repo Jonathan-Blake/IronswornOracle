@@ -14,8 +14,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,8 +29,8 @@ class StoryTellerTest {
     @Test
     void assignActions() {
         StoryTeller storyTeller = new StoryTeller(mockCampaign);
-        when(mockCampaign.getEnemy()).thenReturn(new EnemyData("Bob", new LocationData("BobTown"), null));
-        when(mockCampaign.getFriendlyNPC()).thenReturn(new NPCData("Steve", new LocationData("Tutorial Village")));
+        when(mockCampaign.getEnemy(any())).thenReturn(Optional.of(new EnemyData("Bob", new LocationData("BobTown"), null)));
+        when(mockCampaign.getFriendlyNPC(any())).thenReturn(Optional.of(new NPCData("Steve", new LocationData("Tutorial Village"))));
 
         Subquest ret = storyTeller.assignActions(List.of("goto", "kill", "goto", "report"));
 
@@ -38,10 +40,10 @@ class StoryTellerTest {
     @Test
     void createNewQuest() {
         StoryTeller storyTeller = new StoryTeller(mockCampaign);
-        Mockito.lenient().when(mockCampaign.getEnemy()).thenReturn(new EnemyData("Bob", new LocationData("BobTown"), null));
-        Mockito.lenient().when(mockCampaign.getFriendlyNPC()).thenReturn(new NPCData("Steve", new LocationData("Tutorial Village")));
-        Mockito.lenient().when(mockCampaign.getLocation()).thenReturn(new LocationData("Peaceful Waterfall"));
-        Mockito.lenient().when(mockCampaign.getItem()).thenReturn(new ItemData("Thing-a-majig"));
+        Mockito.lenient().when(mockCampaign.getEnemy(any())).thenReturn(Optional.of(new EnemyData("Bob", new LocationData("BobTown"), null)));
+        Mockito.lenient().when(mockCampaign.getFriendlyNPC(any())).thenReturn(Optional.of(new NPCData("Steve", new LocationData("Tutorial Village"))));
+        Mockito.lenient().when(mockCampaign.getLocation(any())).thenReturn(Optional.of(new LocationData("Peaceful Waterfall")));
+        Mockito.lenient().when(mockCampaign.getItem(any())).thenReturn(Optional.of(new ItemData("Thing-a-majig")));
 
         Quest ret = storyTeller.createNewQuest(Motivation.Knowledge, 10);
 

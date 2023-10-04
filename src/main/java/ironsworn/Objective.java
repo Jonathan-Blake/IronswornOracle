@@ -1,16 +1,20 @@
 package ironsworn;
 
 import ironsworn.actions.QuestAction;
-import ironsworn.structs.EnemyData;
 import ironsworn.structs.ItemData;
 import ironsworn.structs.NPCData;
 
 public class Objective {
     NPCData reportingTo = null;
-    EnemyData enemyAttacking = null;
+    private final Campaign campaign;
     ItemData itemAcquired = null;
     ItemData itemUsed = null;
     private QuestAction previousAction;
+    NPCData enemyAttacking = null;
+
+    public Objective(Campaign campaign) {
+        this.campaign = campaign;
+    }
 
     public NPCData getReportingTo() {
         return reportingTo;
@@ -20,11 +24,11 @@ public class Objective {
         this.reportingTo = reportingTo;
     }
 
-    public EnemyData getEnemyAttacking() {
+    public NPCData getEnemyAttacking() {
         return enemyAttacking;
     }
 
-    public void setEnemyAttacking(EnemyData enemyAttacking) {
+    public void setEnemyAttacking(NPCData enemyAttacking) {
         this.enemyAttacking = enemyAttacking;
     }
 
@@ -50,5 +54,9 @@ public class Objective {
 
     public QuestAction getPreviousGoal() {
         return previousAction;
+    }
+
+    public Campaign campaign() {
+        return this.campaign;
     }
 }
