@@ -31,7 +31,7 @@ class GraphTest {
 
     private static class OnlyOneEdge implements Constraint<Integer> {
         @Override
-        public boolean test(Edge<Integer> edge) {
+        public boolean testEdgeConstraint(Edge<Integer> edge) {
             if (edge.a.getEdges().size() > 1) {
                 return false;
             } else {
@@ -40,7 +40,7 @@ class GraphTest {
         }
 
         @Override
-        public boolean test(Vertex<Integer> rVertex, Vertex<Integer> mVertex) {
+        public boolean testPossibleConnection(Vertex<Integer> rVertex, Vertex<Integer> mVertex) {
             return rVertex.edges.size() <= 1 && mVertex.edges.size() <= 1;
         }
     }
@@ -52,12 +52,12 @@ class GraphTest {
         }
 
         @Override
-        public boolean test(Edge<Integer> edge) {
+        public boolean testEdgeConstraint(Edge<Integer> edge) {
             return edge.a.getContents() >= edge.b.getContents();
         }
 
         @Override
-        public boolean test(Vertex<Integer> a, Vertex<Integer> b) {
+        public boolean testPossibleConnection(Vertex<Integer> a, Vertex<Integer> b) {
             return Graph.traversablePath(a, b, get());
         }
 
@@ -282,14 +282,14 @@ class GraphTest {
             final Vertex<NamedCampaignItem> learn = campaign.getVertex(root.getSubActions().get(0));
             final Vertex<NamedCampaignItem> kill = campaign.getVertex(root.getSubActions().get(1));
             final Vertex<NamedCampaignItem> GoTo = campaign.getVertex(root.getSubActions().get(2));
-            assertTrue(new IsBefore().test(GoTo, learn));
-            assertTrue(new IsBefore().test(GoTo, kill));
-            assertFalse(new IsBefore().test(learn, GoTo));
-            assertFalse(new IsBefore().test(kill, GoTo));
-            assertTrue(new IsAfter().test(learn, GoTo));
-            assertTrue(new IsAfter().test(kill, GoTo));
-            assertFalse(new IsAfter().test(GoTo, learn));
-            assertFalse(new IsAfter().test(GoTo, kill));
+            assertTrue(new IsBefore().testPossibleConnection(GoTo, learn));
+            assertTrue(new IsBefore().testPossibleConnection(GoTo, kill));
+            assertFalse(new IsBefore().testPossibleConnection(learn, GoTo));
+            assertFalse(new IsBefore().testPossibleConnection(kill, GoTo));
+            assertTrue(new IsAfter().testPossibleConnection(learn, GoTo));
+            assertTrue(new IsAfter().testPossibleConnection(kill, GoTo));
+            assertFalse(new IsAfter().testPossibleConnection(GoTo, learn));
+            assertFalse(new IsAfter().testPossibleConnection(GoTo, kill));
             System.out.println(QuestAction.printIndentedTree(root, 0));
         }
 
@@ -300,23 +300,28 @@ class GraphTest {
             Subquest root = storyTeller.assignActions(List.of("learn", "kill", "goto"));
             final Vertex<NamedCampaignItem> learn = campaign.getVertex(root.getSubActions().get(0));
             final Vertex<NamedCampaignItem> kill = campaign.getVertex(root.getSubActions().get(1));
-            final Vertex<NamedCampaignItem> GoTo = campaign.getVertex(root.getSubActions().get(2));
+            final Vertex<NamedCampaignItem> goTo = campaign.getVertex(root.getSubActions().get(2));
             ((QuestAction) kill.getContents()).expand(storyTeller);
-            Vertex<NamedCampaignItem> GoToTarget = campaign.getVertex(((QuestAction) kill.getContents()).getSubActions().get(0));
+            Vertex<NamedCampaignItem> goToTarget = campaign.getVertex(((QuestAction) kill.getContents()).getSubActions().get(0));
             Vertex<NamedCampaignItem> killTarget = campaign.getVertex(((QuestAction) kill.getContents()).getSubActions().get(1));
-            assertTrue(new IsDuring().test(GoToTarget, kill));
-            assertTrue(new IsDuring().test(kill, killTarget));
-            assertFalse(new IsDuring().test(learn, kill));
-            assertFalse(new IsDuring().test(kill, GoTo));
+            assertTrue(new IsDuring().testPossibleConnection(goToTarget, kill));
+//            assertTrue(new IsDuring().test(kill, killTarget));
+            assertTrue(new IsDuring().testPossibleConnection(killTarget, kill));
+            assertFalse(new IsDuring().testPossibleConnection(learn, kill));
+            assertFalse(new IsDuring().testPossibleConnection(kill, goTo));
 
-            assertTrue(new IsBefore().test(GoToTarget, learn));
-            assertTrue(new IsBefore().test(killTarget, learn));
-            assertFalse(new IsBefore().test(GoToTarget, GoTo));
-            assertFalse(new IsBefore().test(killTarget, GoTo));
-            assertTrue(new IsAfter().test(GoToTarget, GoTo));
-            assertTrue(new IsAfter().test(killTarget, GoTo));
-            assertFalse(new IsAfter().test(GoTo, GoToTarget));
-            assertFalse(new IsAfter().test(GoTo, killTarget));
+            assertTrue(new IsBefore().testPossibleConnection(goToTarget, learn));
+            assertTrue(new IsBefore().testPossibleConnection(killTarget, learn));
+            assertFalse(new IsBefore().testPossibleConnection(goToTarget, goTo));
+            assertFalse(new IsBefore().testPossibleConnection(killTarget, goTo));
+            assertTrue(new IsAfter().testPossibleConnection(goToTarget, goTo));
+            assertTrue(new IsAfter().testPossibleConnection(killTarget, goTo));
+            assertFalse(new IsAfter().testPossibleConnection(goTo, goToTarget));
+            assertFalse(new IsAfter().testPossibleConnection(goTo, killTarget));
+
+            assertFalse(new IsDuring().testPossibleConnection(goToTarget, killTarget));
+            assertFalse(new IsDuring().testPossibleConnection(killTarget, goToTarget));
+
             System.out.println(QuestAction.printIndentedTree(root, 0));
         }
     }

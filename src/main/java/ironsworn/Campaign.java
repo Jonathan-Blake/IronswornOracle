@@ -10,19 +10,28 @@ import graph.search.impl.ItemCriteria;
 import graph.search.impl.LocationCriteria;
 import graph.search.impl.NPCCriteria;
 import graph.structs.NamedCampaignItem;
+import ironsworn.oracle.Oracle;
 import ironsworn.structs.ItemData;
 import ironsworn.structs.LocationData;
 import ironsworn.structs.NPCData;
 import ironsworn.utility.Tuple;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 public class Campaign extends Graph<NamedCampaignItem> {
 
+    public Oracle oracle;
+
     public Campaign() {
         super(new AtLocation(), new IsAfter());// No Cycles in locations or Stories
+        try {
+            oracle = new Oracle();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public NamedCampaignItem create(Supplier<NamedCampaignItem> initializer, List<Tuple<Relationship, NamedCampaignItem>> relationships) {

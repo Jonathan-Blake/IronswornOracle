@@ -1,8 +1,12 @@
 package ironsworn;
 
+import graph.structs.NamedCampaignItem;
 import ironsworn.actions.QuestAction;
 import ironsworn.structs.ItemData;
 import ironsworn.structs.NPCData;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 public class Objective {
     NPCData reportingTo = null;
@@ -11,6 +15,20 @@ public class Objective {
     ItemData itemUsed = null;
     private QuestAction previousAction;
     NPCData enemyAttacking = null;
+    Deque<NamedCampaignItem> stack = new LinkedList<>();
+    private QuestAction expansionOf;
+
+    public NamedCampaignItem peek() {
+        return stack.peek();
+    }
+
+    public NamedCampaignItem pop() {
+        return stack.peek();
+    }
+
+    public void add(NamedCampaignItem e) {
+        stack.push(e);
+    }
 
     public Objective(Campaign campaign) {
         this.campaign = campaign;
@@ -58,5 +76,13 @@ public class Objective {
 
     public Campaign campaign() {
         return this.campaign;
+    }
+
+    public QuestAction isExpansion() {
+        return this.expansionOf;
+    }
+
+    public void setExpansionOf(QuestAction expansionOf) {
+        this.expansionOf = expansionOf;
     }
 }

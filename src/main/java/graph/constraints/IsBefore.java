@@ -25,9 +25,9 @@ public class IsBefore implements Constraint<NamedCampaignItem> {
     }
 
     @Override
-    public boolean test(Edge<NamedCampaignItem> edge) {
+    public boolean testEdgeConstraint(Edge<NamedCampaignItem> edge) {
         if (!BIDIRECTIONAL.contains(edge.relationship)) {
-            System.out.println("Skipping edge");
+//            System.out.println("Skipping edge");
             return true;
         }
         if (edge.a.getContents() instanceof QuestNode && edge.b.getContents() instanceof QuestNode) {
@@ -37,7 +37,7 @@ public class IsBefore implements Constraint<NamedCampaignItem> {
     }
 
     @Override
-    public boolean test(Vertex<NamedCampaignItem> a, Vertex<NamedCampaignItem> b) {
+    public boolean testPossibleConnection(Vertex<NamedCampaignItem> a, Vertex<NamedCampaignItem> b) {
         return Graph.traversablePath(a, b, RELATIONSHIP, IsDuring.get());
     }
 }

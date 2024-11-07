@@ -45,8 +45,8 @@ public class Get extends BaseQuestAction {
         return List.of(
                 List.of(),
                 List.of("steal"),
-                List.of("goto", "gather"),
-                List.of("goto","get","goto","subquest","exchange")
+                List.of("goto", "gather")
+//                List.of("goto","get","goto","subquest","exchange")
         );
     }
 

@@ -1,7 +1,7 @@
 package graph;
 
 public interface Constraint<T> {
-    boolean test(Edge<T> edge);
+    boolean testEdgeConstraint(Edge<T> edge);
 
-    boolean test(Vertex<T> a, Vertex<T> b);
+    boolean testPossibleConnection(Vertex<T> a, Vertex<T> b);
 }

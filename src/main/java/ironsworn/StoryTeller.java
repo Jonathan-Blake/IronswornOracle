@@ -3,12 +3,14 @@ package ironsworn;
 import grammar.Motivation;
 import grammar.Quest;
 import grammar.QuestLine;
+import graph.constraints.AtLocation;
 import graph.constraints.IsAfter;
 import graph.constraints.IsDuring;
 import graph.search.Criteria;
 import graph.structs.NamedCampaignItem;
 import ironsworn.actions.QuestAction;
 import ironsworn.actions.Subquest;
+import ironsworn.oracle.OracleWeights;
 import ironsworn.structs.*;
 import ironsworn.utility.Utility;
 
@@ -16,6 +18,7 @@ import java.util.*;
 
 public class StoryTeller {
     public final Campaign campaign;
+    private OracleWeights weights;
 
     public StoryTeller(Campaign campaign) {
         this.campaign = campaign;
@@ -43,13 +46,15 @@ public class StoryTeller {
         Collections.reverse(reversed);
 
         List<QuestAction> questActions = new LinkedList<>();
-        for (String keyword : reversed) {
+        for (int i = 0; i < reversed.size(); i++) {
+            String keyword = reversed.get(i);
             QuestAction action = QuestAction.getFromKeyword(keyword);
+            final boolean exp = objectives.isExpansion() != null;
+            if (exp) {
+                campaign.addEdge(IsDuring.get(), action, objectives.isExpansion());
+            }
             if (objectives.getPreviousGoal() != null) {
                 campaign.addEdge(IsAfter.get(), action, objectives.getPreviousGoal());
-            }
-            if (parent != null) {
-                campaign.addEdge(IsDuring.get(), parent, action);
             }
             action.initialise(objectives, this);
             objectives.setPreviousGoal(action);
@@ -78,6 +83,8 @@ public class StoryTeller {
     public NPCData createNPC(NPCBuilder parameters) {
         final NPCData build = parameters.build(this);
         campaign.create(() -> build, parameters.getRelationships());
+        System.out.println("ADDING EDGE between new NPC and Location");
+        campaign.addEdge(AtLocation.get(), build, build.location);
         return build;
     }
 
@@ -94,11 +101,11 @@ public class StoryTeller {
     }
 
     public String randomName() {
-        return "Fred";
+        return this.campaign.oracle.randomName();
     }
 
     public String randomLocationName() {
-        return "this.LOCATION";
+        return this.campaign.oracle.randomLocationName();
     }
 
     public String randomItemName() {

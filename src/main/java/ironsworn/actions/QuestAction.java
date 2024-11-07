@@ -79,6 +79,7 @@ public abstract class QuestAction extends QuestNode {
                 } else {
                     final Objective objective = new Objective(storyTeller.campaign);
                     updateObjectives(objective);
+                    objective.setExpansionOf(this);
                     final List<QuestAction> internalActions = storyTeller.assignActions(nextSteps, objective, this).getSubActions();
                     this.setSubActions(internalActions);
                     return true;

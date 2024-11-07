@@ -35,8 +35,8 @@ public class Steal extends BaseQuestAction {
     @Override
     protected List<List<String>> getExpansions() {
         return List.of(
-                List.of("goto","stealth","take"),
-                List.of("goto","kill","take")
+//                List.of("goto","stealth","take"),
+//                List.of("goto","kill","take")
         );
     }
 }

@@ -22,7 +22,7 @@ public class LocationContains implements Constraint<NamedCampaignItem> {
     }
 
     @Override
-    public boolean test(Edge<NamedCampaignItem> edge) {
+    public boolean testEdgeConstraint(Edge<NamedCampaignItem> edge) {
         if (edge.relationship != RELATIONSHIP) {
             return true;
         }
@@ -33,7 +33,7 @@ public class LocationContains implements Constraint<NamedCampaignItem> {
     }
 
     @Override
-    public boolean test(Vertex<NamedCampaignItem> rVertex, Vertex<NamedCampaignItem> mVertex) {
+    public boolean testPossibleConnection(Vertex<NamedCampaignItem> rVertex, Vertex<NamedCampaignItem> mVertex) {
         return Graph.traversablePath(rVertex, mVertex, get());
     }
 }

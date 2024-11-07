@@ -14,4 +14,11 @@ public class NamedCampaignItem {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return getClass() + "{"
+                + getName() +
+                " }";
+    }
 }

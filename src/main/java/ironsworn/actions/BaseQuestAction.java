@@ -13,7 +13,6 @@ public abstract class BaseQuestAction extends QuestAction {
 
     @Override
     public void updateObjectives(Objective objectives) {
-
     }
 
     @Override

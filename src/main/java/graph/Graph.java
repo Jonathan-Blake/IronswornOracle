@@ -148,8 +148,11 @@ public class Graph<T> {
         assert adjacency.containsKey(a) && adjacency.containsKey(b);
         Edge<T> edge = a.link(b, edgeType);
         if (testRules(edge)) {
+            adjacency.get(a).add(edge);
+            adjacency.get(b).add(edge);
             return true;
         } else {
+            System.out.println("Failed to set Edge " + edgeType);
             a.edges.remove(edge);
             b.edges.remove(edge);
             return false;
@@ -164,13 +167,21 @@ public class Graph<T> {
     }
 
     private boolean testRules(Edge<T> edge) {
-        if (this.rules.stream().allMatch(rule -> rule.test(edge))) {
+        boolean b = true;
+        for (Constraint<T> tConstraint : this.rules) {
+            if (!tConstraint.testEdgeConstraint(edge)) {
+                System.out.println("Edge " + edge + " failed constraint " + tConstraint);
+                b = false;
+                break;
+            }
+        }
+        if (b) {
             return true;
         } else {
             Vertex<T> tmp = edge.b;
             edge.b = edge.a;
             edge.a = tmp;
-            return this.rules.stream().allMatch(rule -> rule.test(edge));
+            return this.rules.stream().allMatch(rule -> rule.testEdgeConstraint(edge));
         }
     }
 

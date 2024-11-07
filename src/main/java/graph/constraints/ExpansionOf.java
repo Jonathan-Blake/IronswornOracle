@@ -4,16 +4,16 @@ import graph.*;
 import graph.structs.NamedCampaignItem;
 import jdk.jshell.spi.ExecutionControl;
 
-public class IsDuring implements Constraint<NamedCampaignItem> {
+public class ExpansionOf implements Constraint<NamedCampaignItem> {
     private static final Relationship RELATIONSHIP = new Relationship() {
         @Override
         public Relationship reverse() {
-            return ExpansionOf.get();
+            return IsDuring.get();
         }
 
         @Override
         public String getRelationship() {
-            return "Is During";
+            return "Expansion Of";
         }
     };
 

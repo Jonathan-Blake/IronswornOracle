@@ -1,11 +1,11 @@
 package ironsworn.structs;
 
-import graph.structs.NamedCampaignItem;
+import graph.structs.CampaignLocation;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class LocationData extends NamedCampaignItem {
+public class LocationData extends CampaignLocation {
     public List<EnemyData> enemies;
     public NPCData[] npcs;
 

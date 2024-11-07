@@ -2,6 +2,7 @@ package ironsworn.actions.impl;
 
 import graph.search.Criteria;
 import graph.search.impl.CampaignObjectCriteria;
+import graph.structs.NamedCampaignItem;
 import ironsworn.Objective;
 import ironsworn.StoryTeller;
 import ironsworn.actions.BaseQuestAction;
@@ -21,9 +22,10 @@ public class Learn extends BaseQuestAction {
 
     @Override
     public QuestAction initialise(Objective objectives, StoryTeller storyTeller) {
+        final NamedCampaignItem target = objectives.pop();
         this.subject = storyTeller.getFriendlyNPC(
-                Criteria.anyOf(CampaignObjectCriteria.hasName("Frank")).build()
-        ).orElseGet(() -> storyTeller.createNPC(new NPCBuilder().name("Frank").relationship(FRIENDLY))).getName();
+                Criteria.anyOf(CampaignObjectCriteria.hasName(target.getName())).build()
+        ).orElseGet(() -> storyTeller.createNPC(new NPCBuilder().name(target.getName()).relationship(FRIENDLY))).getName();
         return this;
     }
 
@@ -35,10 +37,10 @@ public class Learn extends BaseQuestAction {
     @Override
     protected List<List<String>> getExpansions() {
         return List.of(
-                List.of(),
-                List.of("goto", "subquest", "listen"),
-                List.of("goto", "get", "read"),
-                List.of("get", "subquest", "give", "listen")
+                List.of()
+//                List.of("goto", "subquest", "listen"),
+//                List.of("goto", "get", "read"),
+//                List.of("get", "subquest", "give", "listen")
         );
     }
 }

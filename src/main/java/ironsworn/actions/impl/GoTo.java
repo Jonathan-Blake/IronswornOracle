@@ -27,14 +27,24 @@ public class GoTo extends BaseQuestAction {
         if (target != null) {
             if (enemy) {
                 objectives.setEnemyAttacking(objectives.campaign().getEnemy(Criteria.allOf(
+                                CampaignObjectCriteria.hasName(target),
+                                LocationCriteria.contentsOfLocation(location)).build()
+                        )
+                        .orElseThrow());
+                objectives.add(objectives.campaign().getEnemy(Criteria.allOf(
                         CampaignObjectCriteria.hasName(target),
-                        LocationCriteria.contentsOfLocation(location)).build()
-                ).orElseThrow());
+                        LocationCriteria.contentsOfLocation(location)).build()).orElseThrow());
             } else {
                 objectives.setReportingTo(objectives.campaign().getFriendlyNPC(Criteria.allOf(
-                        CampaignObjectCriteria.hasName(target),
-                        LocationCriteria.contentsOfLocation(location)).build()
-                ).orElseThrow());
+                                CampaignObjectCriteria.hasName(target),
+                                LocationCriteria.contentsOfLocation(location)).build()
+                        )
+                        .orElseThrow());
+                objectives.add(objectives.campaign().getFriendlyNPC(Criteria.allOf(
+                                CampaignObjectCriteria.hasName(target),
+                                LocationCriteria.contentsOfLocation(location)).build()
+                        )
+                        .orElseThrow());
             }
         }
     }

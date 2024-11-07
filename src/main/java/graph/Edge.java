@@ -12,4 +12,13 @@ public class Edge<T> {
         a.edges.add(this);
         b.edges.add(this);
     }
+
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "relationship=" + relationship +
+                "," + a +
+                " => " + b +
+                '}';
+    }
 }

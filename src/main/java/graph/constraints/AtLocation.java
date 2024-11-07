@@ -24,13 +24,13 @@ public class AtLocation implements Constraint<NamedCampaignItem> {
     }
 
     @Override
-    public boolean test(Edge<NamedCampaignItem> edge) {
+    public boolean testEdgeConstraint(Edge<NamedCampaignItem> edge) {
         if (edge.relationship != AtLocation.RELATIONSHIP) {
-            System.out.println("Skipping edge");
+//            System.out.println("Skipping edge");
             return true;
         }
         if (!(edge.b.getContents() instanceof CampaignLocation)) {
-            System.out.println("Relationship at must be location.");
+//            System.out.println("Relationship at must be location.");
             return false;
         }
         // A can only be 'at' one location
@@ -58,7 +58,7 @@ public class AtLocation implements Constraint<NamedCampaignItem> {
     }
 
     @Override
-    public boolean test(Vertex<NamedCampaignItem> at, Vertex<NamedCampaignItem> location) {
+    public boolean testPossibleConnection(Vertex<NamedCampaignItem> at, Vertex<NamedCampaignItem> location) {
         return Graph.traversablePath(at, location, get());
     }
 

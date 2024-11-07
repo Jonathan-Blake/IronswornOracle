@@ -28,9 +28,7 @@ public class Vertex<T> {
 
     @Override
     public String toString() {
-        return "Vertex{" +
-                "contents=" + contents +
-                '}';
+        return "Vertex{ " + contents + " }";
     }
 
     @Override
